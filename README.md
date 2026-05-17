@@ -16,7 +16,7 @@ Live deployment: https://jayyyyupv.github.io/CMSC129-Lab4-TolentinoEM/
 
 - Frontend: HTML, CSS, and vanilla JavaScript
 - Backend: Node.js built-in `http` module
-- Data Storage: In-memory array
+- Data Storage: Browser `localStorage` for the deployed frontend and an in-memory array for the local Node.js routes
 - Unit Testing: Jest
 - Integration Testing: Jest with real HTTP requests
 - System Testing: Playwright
@@ -228,7 +228,7 @@ npm run test:integration
 npm run test:system
 ```
 
-The workflow also has a deploy job for pushes to `main`. Deployment depends on the test job, so GitHub Pages deploys only after the unit, integration, and system tests pass.
+The workflow also deploys the static frontend in `public/` to GitHub Pages after the test job passes. The live deployed version uses browser `localStorage`, which makes it compatible with GitHub Pages. The Node.js `/tasks` routes are still kept for the local app and integration testing.
 
 Deployment target:
 

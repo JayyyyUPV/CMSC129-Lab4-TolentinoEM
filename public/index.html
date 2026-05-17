@@ -375,6 +375,8 @@
         editingId: null
       };
 
+      const STORAGE_KEY = "cmsc129-lab4-tasks";
+
       const elements = {
         form: document.querySelector("#task-form"),
         title: document.querySelector("#task-title"),
@@ -412,28 +414,25 @@
         setBusy(false);
       }
 
-      async function requestJson(path, options = {}) {
-        const response = await fetch(path, {
-          ...options,
-          headers: {
-            Accept: "application/json",
-            ...(options.body ? { "Content-Type": "application/json" } : {}),
-            ...options.headers
-          },
-          body: options.body ? JSON.stringify(options.body) : undefined
-        });
+      function readStoredTasks() {
+        const storedTasks = localStorage.getItem(STORAGE_KEY);
 
-        if (response.status === 204) {
-          return null;
-        }
+        return storedTasks ? JSON.parse(storedTasks) : [];
+      }
 
-        const body = await response.json();
+      function writeStoredTasks(tasks) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+      }
 
-        if (!response.ok) {
-          throw new Error(body.errors?.join(", ") || "Request failed");
-        }
+      function getNextTaskId(tasks) {
+        return tasks.reduce((maxId, task) => Math.max(maxId, task.id), 0) + 1;
+      }
 
-        return body;
+      function normalizeTaskInput(input) {
+        return {
+          title: input.title.trim(),
+          description: input.description.trim()
+        };
       }
 
       function renderEmptyState() {
@@ -534,26 +533,36 @@
         });
       }
 
-      async function loadTasks() {
+      function loadTasks() {
         try {
-          state.tasks = await requestJson("/tasks");
+          state.tasks = readStoredTasks();
           renderTasks();
         } catch (error) {
           setStatus(error.message, "error");
         }
       }
 
-      async function createTask() {
+      function createTask() {
         setBusy(true);
 
         try {
-          await requestJson("/tasks", {
-            method: "POST",
-            body: getFormInput()
-          });
+          const input = normalizeTaskInput(getFormInput());
+
+          if (!input.title) {
+            throw new Error("Title is required");
+          }
+
+          const task = {
+            id: getNextTaskId(state.tasks),
+            ...input,
+            completed: false
+          };
+
+          state.tasks = [...state.tasks, task];
+          writeStoredTasks(state.tasks);
           resetForm();
           setStatus("Task added.", "success");
-          await loadTasks();
+          loadTasks();
         } catch (error) {
           setStatus(error.message, "error");
           setBusy(false);
@@ -569,7 +578,7 @@
         elements.title.focus();
       }
 
-      async function saveTask() {
+      function saveTask() {
         if (state.editingId === null) {
           return;
         }
@@ -577,44 +586,59 @@
         setBusy(true);
 
         try {
-          await requestJson(`/tasks/${state.editingId}`, {
-            method: "PUT",
-            body: getFormInput()
-          });
+          const input = normalizeTaskInput(getFormInput());
+
+          if (!input.title) {
+            throw new Error("Title is required");
+          }
+
+          state.tasks = state.tasks.map((task) =>
+            task.id === state.editingId
+              ? {
+                  ...task,
+                  ...input
+                }
+              : task
+          );
+          writeStoredTasks(state.tasks);
           resetForm();
           setStatus("Task updated.", "success");
-          await loadTasks();
+          loadTasks();
         } catch (error) {
           setStatus(error.message, "error");
           setBusy(false);
         }
       }
 
-      async function toggleTaskCompletion(id, completed) {
+      function toggleTaskCompletion(id, completed) {
         try {
-          await requestJson(`/tasks/${id}`, {
-            method: "PATCH",
-            body: { completed }
-          });
-          await loadTasks();
+          state.tasks = state.tasks.map((task) =>
+            task.id === id
+              ? {
+                  ...task,
+                  completed
+                }
+              : task
+          );
+          writeStoredTasks(state.tasks);
+          loadTasks();
         } catch (error) {
           setStatus(error.message, "error");
-          await loadTasks();
+          loadTasks();
         }
       }
 
-      async function deleteTask(id) {
+      function deleteTask(id) {
         setBusy(true);
 
         try {
-          await requestJson(`/tasks/${id}`, {
-            method: "DELETE"
-          });
+          state.tasks = state.tasks.filter((task) => task.id !== id);
+          writeStoredTasks(state.tasks);
           if (state.editingId === id) {
             resetForm();
           }
           setStatus("Task deleted.", "success");
-          await loadTasks();
+          loadTasks();
         } catch (error) {
           setStatus(error.message, "error");
         } finally {
