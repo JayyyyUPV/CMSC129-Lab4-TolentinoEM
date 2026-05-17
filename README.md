@@ -109,15 +109,75 @@ npm run test:system
 
 ### Unit Test Results
 
+#### Commit 1 - `[RED] Unit tests`
+
+Command used:
+
+```bash
+npm run test:unit
+```
+
+Expected result: failed unit tests because `src/taskLogic.js` only contained Red phase stubs that threw `Not implemented`.
+
+Summary:
+
+- Test Suites: 1 failed, 1 total
+- Tests: 4 failed, 4 total
+- Failure reason: `Not implemented`
+
+![Red unit test output showing failing task logic tests](images/unit-test-results/unit-red-1.png)
+
+![Red unit test output showing Not implemented errors](images/unit-test-results/unit-red-2.png)
+
+#### Commit 2 - `[GREEN] Implement task validation logic`
+
+Command used:
+
+```bash
+npm run test:unit
+npm test
+```
+
+Expected result: all unit tests passed after implementing only the minimum task logic required by the Red tests.
+
+Summary:
+
+- Test Suites: 1 passed, 1 total
+- Tests: 4 passed, 4 total
+
+![Green unit test output using npm run test:unit](images/unit-test-results/unit-green-1.png)
+
+![Green unit test output using npm run test:unit and npm test](images/unit-test-results/unit-green-2.png)
+
+#### Commit 3 - `[REFACTOR] Refactor task normalization logic`
+
+Command used:
+
+```bash
+npm.cmd test
+```
+
+Expected result: all unit tests still passed after extracting task title and field normalization helpers.
+
+Summary:
+
+- Test Suites: 1 passed, 1 total
+- Tests: 4 passed, 4 total
+
+![Refactor unit test output showing tests still passing](images/unit-test-results/unit-refactor.png)
+
 
 ### Integration Test Results
 
+Pending.
 
 ### System Test Results
 
+Pending.
 
 ### Full Test Suite Results
 
+Pending.
 
 ## CI/CD Setup
 
