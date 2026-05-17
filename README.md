@@ -169,6 +169,28 @@ Summary:
 
 ### Integration Test Results
 
+Failed integration test output:
+```bash
+npm run test:integration
+```
+
+Summary:
+- Test Suites: 1 failed, 1 total
+- Tests: 2 failed, 2 total
+
+![Failed integration test output](images/integration-test-results/Screenshot%202026-05-17%20185947.png)
+
+Passing integration test output:
+Command:
+```bash
+npm run test:integration
+```
+
+Summary:
+- Test Suites: 1 passed, 1 total
+- Tests: 2 passed, 2 total
+
+![Passing integration test output](images/integration-test-results/integration-green.png)
 
 ### System Test Results
 
