@@ -4,6 +4,8 @@
 
 This project is a simple Task Manager CRUD web application built for CMSC 129 Laboratory Assignment 4. Users can create tasks, view the current task list, update task details or completion status, and delete tasks that are no longer needed. The application focuses on one resource only, `Task`, and will be developed using Test-Driven Development through the Red-Green-Refactor cycle.
 
+Live deployment: https://jayyyyupv.github.io/CMSC129-Lab4-TolentinoEM/
+
 ## User Stories
 
 1. As a student, I want to create a task with a title and description, so that I can record work I need to finish.
@@ -200,6 +202,21 @@ Summary:
 
 ## CI/CD Setup
 
+GitHub Actions runs `npm test` on every push and pull request to `main`. The full test command runs all three levels:
+
+```bash
+npm run test:unit
+npm run test:integration
+npm run test:system
+```
+
+The workflow also has a deploy job for pushes to `main`. Deployment depends on the test job, so GitHub Pages deploys only after the unit, integration, and system tests pass.
+
+Deployment target:
+
+```text
+https://jayyyyupv.github.io/CMSC129-Lab4-TolentinoEM/
+```
 
 ## Reflection
 

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Task Manager</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 2rem;
+        max-width: 720px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 0.75rem;
+      }
+
+      input,
+      textarea {
+        display: block;
+        margin-top: 0.25rem;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Task Manager</h1>
+      <form>
+        <label>
+          Title
+          <input data-testid="task-title-input" />
+        </label>
+        <label>
+          Description
+          <textarea data-testid="task-description-input"></textarea>
+        </label>
+        <button type="button" data-testid="create-task-button">Create</button>
+      </form>
+      <ul data-testid="task-list">
+        <li>
+          Sample task
+          <button type="button" data-testid="edit-task-button">Edit</button>
+          <button type="button" data-testid="save-task-button">Save</button>
+          <button type="button" data-testid="delete-task-button">Delete</button>
+        </li>
+      </ul>
+    </main>
+  </body>
+</html>
