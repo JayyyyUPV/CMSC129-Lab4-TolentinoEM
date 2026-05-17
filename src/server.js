@@ -7,6 +7,25 @@ function sendJson(response, statusCode, body) {
   response.end(JSON.stringify(body));
 }
 
+function sendTasksPage(response) {
+  response.statusCode = 200;
+  response.setHeader("Content-Type", "text/html");
+  response.end(`
+    <form>
+      <input data-testid="task-title-input" />
+      <textarea data-testid="task-description-input"></textarea>
+      <button data-testid="create-task-button">Create</button>
+    </form>
+    <ul data-testid="task-list">
+      <li>
+        <button data-testid="edit-task-button">Edit</button>
+        <button data-testid="save-task-button">Save</button>
+        <button data-testid="delete-task-button">Delete</button>
+      </li>
+    </ul>
+  `);
+}
+
 function readBody(request, callback) {
   let rawBody = "";
 
@@ -24,6 +43,11 @@ function createTaskServer() {
 
   return http.createServer((request, response) => {
     if (request.method === "GET" && request.url === "/tasks") {
+      if (request.headers.accept?.includes("text/html")) {
+        sendTasksPage(response);
+        return;
+      }
+
       sendJson(response, 200, tasks);
       return;
     }
