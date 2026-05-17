@@ -4,7 +4,7 @@
   "description": "Task Manager CRUD app for CMSC 129 Lab 4 using TDD.",
   "main": "src/server.js",
   "scripts": {
-    "test": "npm run test:unit",
+    "test": "npm run test:unit && npm run test:integration",
     "test:unit": "jest tests/unit --runInBand",
     "test:integration": "jest tests/integration --runInBand",
     "test:system": "playwright test"
