@@ -125,9 +125,9 @@ Summary:
 - Tests: 4 failed, 4 total
 - Failure reason: `Not implemented`
 
-![Red unit test output showing failing task logic tests](images/unit-test-results/unit-red-1.png)
+![Red unit test output showing failing task logic tests](images/test-results/unit-red-1.png)
 
-![Red unit test output showing Not implemented errors](images/unit-test-results/unit-red-2.png)
+![Red unit test output showing Not implemented errors](images/test-results/unit-red-2.png)
 
 #### Commit 2 - `[GREEN] Implement task validation logic`
 
@@ -145,9 +145,9 @@ Summary:
 - Test Suites: 1 passed, 1 total
 - Tests: 4 passed, 4 total
 
-![Green unit test output using npm run test:unit](images/unit-test-results/unit-green-1.png)
+![Green unit test output using npm run test:unit](images/test-results/unit-green-1.png)
 
-![Green unit test output using npm run test:unit and npm test](images/unit-test-results/unit-green-2.png)
+![Green unit test output using npm run test:unit and npm test](images/test-results/unit-green-2.png)
 
 #### Commit 3 - `[REFACTOR] Refactor task normalization logic`
 
@@ -164,7 +164,7 @@ Summary:
 - Test Suites: 1 passed, 1 total
 - Tests: 4 passed, 4 total
 
-![Refactor unit test output showing tests still passing](images/unit-test-results/unit-refactor.png)
+![Refactor unit test output showing tests still passing](images/test-results/unit-refactor.png)
 
 
 ### Integration Test Results
