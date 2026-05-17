@@ -236,5 +236,8 @@ Deployment target:
 https://jayyyyupv.github.io/CMSC129-Lab4-TolentinoEM/
 ```
 
-## Reflection
+### Commit History Note
 
+Two documentation-only commits were pushed with non-standard messages (`Readme Changes` and `Readme and andd screenshots`) instead of the required `[DOCS]` prefix. The commits were not rewritten or force-pushed because the assignment uses Git history as evidence of the TDD timeline. The main Red-Green-Refactor commits remain visible in chronological order, and later documentation updates use the required commit prefix.
+
+## Reflection
