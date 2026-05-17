@@ -1,10 +1,23 @@
+const TITLE_REQUIRED_ERROR = "Title is required";
+
+function getNormalizedTitle(input) {
+  return input?.title?.trim() || "";
+}
+
+function normalizeTaskFields(input) {
+  return {
+    title: input.title.trim(),
+    description: input.description.trim()
+  };
+}
+
 function validateTaskInput(input) {
-  const title = input?.title?.trim() || "";
+  const title = getNormalizedTitle(input);
 
   if (!title) {
     return {
       valid: false,
-      errors: ["Title is required"]
+      errors: [TITLE_REQUIRED_ERROR]
     };
   }
 
@@ -15,10 +28,11 @@ function validateTaskInput(input) {
 }
 
 function createTask(input, id) {
+  const normalizedFields = normalizeTaskFields(input);
+
   return {
     id,
-    title: input.title.trim(),
-    description: input.description.trim(),
+    ...normalizedFields,
     completed: false
   };
 }
