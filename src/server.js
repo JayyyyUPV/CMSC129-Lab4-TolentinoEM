@@ -1,31 +1,39 @@
 const http = require("http");
 const { createTask, validateTaskInput } = require("./taskLogic");
 
+function sendJson(response, statusCode, body) {
+  response.statusCode = statusCode;
+  response.setHeader("Content-Type", "application/json");
+  response.end(JSON.stringify(body));
+}
+
+function readBody(request, callback) {
+  let rawBody = "";
+
+  request.on("data", (chunk) => {
+    rawBody += chunk;
+  });
+  request.on("end", () => {
+    callback(JSON.parse(rawBody));
+  });
+}
+
 function createTaskServer() {
   const tasks = [];
   let nextId = 1;
 
   return http.createServer((request, response) => {
     if (request.method === "GET" && request.url === "/tasks") {
-      response.statusCode = 200;
-      response.end(JSON.stringify(tasks));
+      sendJson(response, 200, tasks);
       return;
     }
 
     if (request.method === "POST" && request.url === "/tasks") {
-      let rawBody = "";
-
-      request.on("data", (chunk) => {
-        rawBody += chunk;
-      });
-
-      request.on("end", () => {
-        const body = JSON.parse(rawBody);
+      readBody(request, (body) => {
         const validation = validateTaskInput(body);
 
         if (!validation.valid) {
-          response.statusCode = 400;
-          response.end(JSON.stringify({ errors: validation.errors }));
+          sendJson(response, 400, { errors: validation.errors });
           return;
         }
 
@@ -33,8 +41,7 @@ function createTaskServer() {
         nextId += 1;
         tasks.push(task);
 
-        response.statusCode = 201;
-        response.end(JSON.stringify(task));
+        sendJson(response, 201, task);
       });
 
       return;
