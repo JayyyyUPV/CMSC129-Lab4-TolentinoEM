@@ -1,17 +1,35 @@
-function notImplemented() {
-  throw new Error("Not implemented");
+function validateTaskInput(input) {
+  const title = input?.title?.trim() || "";
+
+  if (!title) {
+    return {
+      valid: false,
+      errors: ["Title is required"]
+    };
+  }
+
+  return {
+    valid: true,
+    errors: []
+  };
 }
 
-function validateTaskInput() {
-  notImplemented();
+function createTask(input, id) {
+  return {
+    id,
+    title: input.title.trim(),
+    description: input.description.trim(),
+    completed: false
+  };
 }
 
-function createTask() {
-  notImplemented();
-}
-
-function updateTask() {
-  notImplemented();
+function updateTask(task, updates) {
+  return {
+    ...task,
+    title: updates.title ?? task.title,
+    description: updates.description ?? task.description,
+    completed: updates.completed ?? task.completed
+  };
 }
 
 module.exports = {
