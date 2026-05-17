@@ -54,7 +54,15 @@ cd CMSC129-Lab4-TolentinoEM
 npm install
 ```
 
+On Windows PowerShell, use `npm.cmd` if `npm` is blocked by the execution policy:
+
+```bash
+npm.cmd install
+```
+
 ### Run the Application
+
+The application server will be added during the integration and system testing phases. At the current unit testing phase, run the unit tests instead.
 
 ```bash
 npm start
@@ -66,10 +74,22 @@ npm start
 npm test
 ```
 
+On Windows PowerShell:
+
+```bash
+npm.cmd test
+```
+
 ### Run Unit Tests
 
 ```bash
 npm run test:unit
+```
+
+On Windows PowerShell:
+
+```bash
+npm.cmd run test:unit
 ```
 
 ### Run Integration Tests
