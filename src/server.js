@@ -1,29 +1,53 @@
 const http = require("http");
 const { createTask, validateTaskInput } = require("./taskLogic");
 
+const TASKS_PATH = "/tasks";
+const TASKS_PAGE_HTML = `
+  <!doctype html>
+  <html lang="en">
+    <head>
+      <meta charset="utf-8" />
+      <title>Task Manager</title>
+    </head>
+    <body>
+      <main>
+        <form>
+          <label>
+            Title
+            <input data-testid="task-title-input" />
+          </label>
+          <label>
+            Description
+            <textarea data-testid="task-description-input"></textarea>
+          </label>
+          <button type="button" data-testid="create-task-button">Create</button>
+        </form>
+        <ul data-testid="task-list">
+          <li>
+            <button type="button" data-testid="edit-task-button">Edit</button>
+            <button type="button" data-testid="save-task-button">Save</button>
+            <button type="button" data-testid="delete-task-button">Delete</button>
+          </li>
+        </ul>
+      </main>
+    </body>
+  </html>
+`;
+
+function wantsHtml(request) {
+  return request.headers.accept?.includes("text/html");
+}
+
 function sendJson(response, statusCode, body) {
   response.statusCode = statusCode;
-  response.setHeader("Content-Type", "application/json");
+  response.setHeader("Content-Type", "application/json; charset=utf-8");
   response.end(JSON.stringify(body));
 }
 
 function sendTasksPage(response) {
   response.statusCode = 200;
-  response.setHeader("Content-Type", "text/html");
-  response.end(`
-    <form>
-      <input data-testid="task-title-input" />
-      <textarea data-testid="task-description-input"></textarea>
-      <button data-testid="create-task-button">Create</button>
-    </form>
-    <ul data-testid="task-list">
-      <li>
-        <button data-testid="edit-task-button">Edit</button>
-        <button data-testid="save-task-button">Save</button>
-        <button data-testid="delete-task-button">Delete</button>
-      </li>
-    </ul>
-  `);
+  response.setHeader("Content-Type", "text/html; charset=utf-8");
+  response.end(TASKS_PAGE_HTML);
 }
 
 function readBody(request, callback) {
@@ -42,8 +66,8 @@ function createTaskServer() {
   let nextId = 1;
 
   return http.createServer((request, response) => {
-    if (request.method === "GET" && request.url === "/tasks") {
-      if (request.headers.accept?.includes("text/html")) {
+    if (request.method === "GET" && request.url === TASKS_PATH) {
+      if (wantsHtml(request)) {
         sendTasksPage(response);
         return;
       }
@@ -52,7 +76,7 @@ function createTaskServer() {
       return;
     }
 
-    if (request.method === "POST" && request.url === "/tasks") {
+    if (request.method === "POST" && request.url === TASKS_PATH) {
       readBody(request, (body) => {
         const validation = validateTaskInput(body);
 
@@ -73,6 +97,14 @@ function createTaskServer() {
 
     response.statusCode = 404;
     response.end();
+  });
+}
+
+if (require.main === module) {
+  const port = process.env.PORT || 3000;
+
+  createTaskServer().listen(port, () => {
+    console.log(`Open http://localhost:${port}/tasks`);
   });
 }
 

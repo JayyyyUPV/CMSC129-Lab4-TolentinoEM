@@ -13,10 +13,10 @@ This project is a simple Task Manager CRUD web application built for CMSC 129 La
 ## Tech Stack
 
 - Frontend: HTML, CSS, and vanilla JavaScript
-- Backend: Node.js with Express
+- Backend: Node.js built-in `http` module
 - Data Storage: In-memory array
 - Unit Testing: Jest
-- Integration Testing: Jest with Supertest
+- Integration Testing: Jest with real HTTP requests
 - System Testing: Playwright
 - CI/CD: GitHub Actions
 
@@ -31,13 +31,15 @@ Unit tests will focus on the isolated task business logic in `src/taskLogic.js` 
 - `createTask()` trims task text fields, assigns the provided `id`, and sets `completed` to `false`.
 - `updateTask()` preserves the original task `id` while updating only the provided fields.
 
-These tests currently fail because `src/taskLogic.js` is only a Red phase stub that throws `Not implemented`.
+These tests currently pass.
 
 ### Integration Tests
 
+Integration tests in `tests/integration/tasksRoutes.test.js` start the real HTTP server, send real requests to the task routes, and verify that the route layer works together with the task business logic and in-memory data store.
 
 ### System Tests
 
+System tests in `tests/system/taskUserStories.spec.js` use Playwright to open the task page in a real browser. Each describe block maps to one README user story.
 
 ## Setup Instructions
 
@@ -61,8 +63,6 @@ npm.cmd install
 ```
 
 ### Run the Application
-
-The application server will be added during the integration and system testing phases. At the current unit testing phase, run the unit tests instead.
 
 ```bash
 npm start
