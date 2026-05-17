@@ -376,6 +376,8 @@
       };
 
       const STORAGE_KEY = "cmsc129-lab4-tasks";
+      const TITLE_REQUIRED_ERROR = "Title is required";
+      const DEFAULT_DESCRIPTION = "No description";
 
       const elements = {
         form: document.querySelector("#task-form"),
@@ -398,13 +400,22 @@
 
       function setStatus(message, tone = "") {
         elements.status.textContent = message;
-        elements.status.dataset.tone = tone;
+
+        if (tone) {
+          elements.status.dataset.tone = tone;
+        } else {
+          delete elements.status.dataset.tone;
+        }
+      }
+
+      function isEditing() {
+        return state.editingId !== null;
       }
 
       function setBusy(isBusy) {
         elements.createButton.disabled = isBusy;
-        elements.saveButton.disabled = isBusy || state.editingId === null;
-        elements.cancelButton.disabled = isBusy || state.editingId === null;
+        elements.saveButton.disabled = isBusy || !isEditing();
+        elements.cancelButton.disabled = isBusy || !isEditing();
       }
 
       function resetForm() {
@@ -416,8 +427,9 @@
 
       function readStoredTasks() {
         const storedTasks = localStorage.getItem(STORAGE_KEY);
+        const parsedTasks = storedTasks ? JSON.parse(storedTasks) : [];
 
-        return storedTasks ? JSON.parse(storedTasks) : [];
+        return Array.isArray(parsedTasks) ? parsedTasks : [];
       }
 
       function writeStoredTasks(tasks) {
@@ -430,8 +442,8 @@
 
       function normalizeTaskInput(input) {
         return {
-          title: input.title.trim(),
-          description: input.description.trim()
+          title: input.title?.trim() || "",
+          description: input.description?.trim() || ""
         };
       }
 
@@ -488,7 +500,7 @@
         title.textContent = task.title;
 
         const description = document.createElement("p");
-        description.textContent = task.description || "No description";
+        description.textContent = task.description || DEFAULT_DESCRIPTION;
 
         content.append(title, description);
 
@@ -549,7 +561,7 @@
           const input = normalizeTaskInput(getFormInput());
 
           if (!input.title) {
-            throw new Error("Title is required");
+            throw new Error(TITLE_REQUIRED_ERROR);
           }
 
           const task = {
@@ -589,7 +601,7 @@
           const input = normalizeTaskInput(getFormInput());
 
           if (!input.title) {
-            throw new Error("Title is required");
+            throw new Error(TITLE_REQUIRED_ERROR);
           }
 
           state.tasks = state.tasks.map((task) =>
@@ -621,10 +633,10 @@
               : task
           );
           writeStoredTasks(state.tasks);
-          loadTasks();
+          renderTasks();
         } catch (error) {
           setStatus(error.message, "error");
-          loadTasks();
+          renderTasks();
         }
       }
 
@@ -638,7 +650,7 @@
             resetForm();
           }
           setStatus("Task deleted.", "success");
-          loadTasks();
+          renderTasks();
         } catch (error) {
           setStatus(error.message, "error");
         } finally {
@@ -649,7 +661,7 @@
       elements.form.addEventListener("submit", (event) => {
         event.preventDefault();
 
-        if (state.editingId === null) {
+        if (!isEditing()) {
           createTask();
         } else {
           saveTask();

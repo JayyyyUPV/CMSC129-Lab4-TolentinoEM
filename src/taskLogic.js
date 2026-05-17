@@ -1,5 +1,9 @@
 const TITLE_REQUIRED_ERROR = "Title is required";
 
+function hasOwnField(object, field) {
+  return Object.prototype.hasOwnProperty.call(object ?? {}, field);
+}
+
 function getNormalizedTitle(input) {
   return input?.title?.trim() || "";
 }
@@ -41,16 +45,18 @@ function createTask(input, id) {
   };
 }
 
-function updateTask(task, updates) {
+function updateTask(task, updates = {}) {
+  const safeUpdates = updates ?? {};
+
   return {
     ...task,
-    title: Object.prototype.hasOwnProperty.call(updates, "title")
-      ? getNormalizedTitle(updates)
+    title: hasOwnField(safeUpdates, "title")
+      ? getNormalizedTitle(safeUpdates)
       : task.title,
-    description: Object.prototype.hasOwnProperty.call(updates, "description")
-      ? getNormalizedDescription(updates)
+    description: hasOwnField(safeUpdates, "description")
+      ? getNormalizedDescription(safeUpdates)
       : task.description,
-    completed: updates.completed ?? task.completed
+    completed: safeUpdates.completed ?? task.completed
   };
 }
 

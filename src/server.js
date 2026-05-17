@@ -7,6 +7,10 @@ const TASKS_PATH = "/tasks";
 const TASKS_PAGE_PATH = path.join(__dirname, "..", "public", "index.html");
 const TASK_PATH_PATTERN = /^\/tasks\/(\d+)$/;
 
+function hasOwnField(object, field) {
+  return Object.prototype.hasOwnProperty.call(object ?? {}, field);
+}
+
 function wantsHtml(request) {
   return request.headers.accept?.includes("text/html");
 }
@@ -72,7 +76,7 @@ function findTaskIndex(tasks, id) {
 }
 
 function validateTaskUpdateInput(input) {
-  if (Object.prototype.hasOwnProperty.call(input, "title")) {
+  if (hasOwnField(input, "title")) {
     return validateTaskInput({
       title: input.title,
       description: input.description ?? ""
