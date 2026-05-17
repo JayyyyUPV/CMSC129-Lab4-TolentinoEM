@@ -1,0 +1,15 @@
+{
+  "name": "cmsc129-lab4-tolentinoem",
+  "version": "1.0.0",
+  "description": "Task Manager CRUD app for CMSC 129 Lab 4 using TDD.",
+  "main": "src/server.js",
+  "scripts": {
+    "test": "npm run test:unit",
+    "test:unit": "jest tests/unit --runInBand",
+    "test:integration": "jest tests/integration --runInBand",
+    "test:system": "playwright test"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
