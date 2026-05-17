@@ -217,6 +217,18 @@ Summary:
 
 ### Full Test Suite Results
 
+Command:
+```bash
+npm.cmd test
+```
+
+Summary:
+- Unit Tests: 4 passed
+- Integration Tests: 2 passed
+- System Tests: 3 passed
+
+![Full passing test suite output](images/test-results/full-suite-result.png)
+
 
 ## CI/CD Setup
 
@@ -241,3 +253,7 @@ https://jayyyyupv.github.io/CMSC129-Lab4-TolentinoEM/
 Two documentation-only commits were pushed with non-standard messages (`Readme Changes` and `Readme and andd screenshots`) instead of the required `[DOCS]` prefix. The commits were not rewritten or force-pushed because the assignment uses Git history as evidence of the TDD timeline. The main Red-Green-Refactor commits remain visible in chronological order, and later documentation updates use the required commit prefix.
 
 ## Reflection
+
+Doing the testing before the implementation was definitely challenging mentally. It took a reset from how projects are usually made because I had to focus on fulfilling the basic tasks and tests first instead of immediately starting with the code. It forced me to take everything step by step and really analyze what needed to be done, what the plan for the code should be, and how each part of the application should behave before building it. The most difficult part was not just writing tests, but writing tests that were actually correct, useful, and relevant to the project design. In all honesty, I was not able to make the tests correctly at first, so I had to change a lot during the system refactor. That showed me that one of the biggest challenges in TDD is creating tests that are all-encompassing enough to guide the project without being unclear or disconnected from the real user stories.
+
+Writing tests first also changed the way I designed the code. It pushed me to focus on the bare minimum and the essentials before anything else. When coding normally, it is easy to get sidetracked by user interface changes or extra features that may be nice but are not necessary for the core function of the project. By having tests that the code needed to satisfy, I had to pause and focus on what needed to be built first. This made the design more organized because the task logic, HTTP routes, and system behavior had clearer responsibilities. The tests helped define the structure of the code instead of the code being written randomly and tested only afterward.
