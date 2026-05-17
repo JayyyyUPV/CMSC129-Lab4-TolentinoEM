@@ -70,6 +70,12 @@ npm.cmd install
 npm start
 ```
 
+On Windows PowerShell:
+
+```bash
+npm.cmd start
+```
+
 ### Run Tests
 
 ```bash
@@ -100,10 +106,22 @@ npm.cmd run test:unit
 npm run test:integration
 ```
 
+On Windows PowerShell:
+
+```bash
+npm.cmd run test:integration
+```
+
 ### Run System Tests
 
 ```bash
 npm run test:system
+```
+
+On Windows PowerShell:
+
+```bash
+npm.cmd run test:system
 ```
 
 ## Test Results

@@ -4,10 +4,14 @@ function getNormalizedTitle(input) {
   return input?.title?.trim() || "";
 }
 
+function getNormalizedDescription(input) {
+  return input?.description?.trim() || "";
+}
+
 function normalizeTaskFields(input) {
   return {
-    title: input.title.trim(),
-    description: input.description.trim()
+    title: getNormalizedTitle(input),
+    description: getNormalizedDescription(input)
   };
 }
 
@@ -40,8 +44,12 @@ function createTask(input, id) {
 function updateTask(task, updates) {
   return {
     ...task,
-    title: updates.title ?? task.title,
-    description: updates.description ?? task.description,
+    title: Object.prototype.hasOwnProperty.call(updates, "title")
+      ? getNormalizedTitle(updates)
+      : task.title,
+    description: Object.prototype.hasOwnProperty.call(updates, "description")
+      ? getNormalizedDescription(updates)
+      : task.description,
     completed: updates.completed ?? task.completed
   };
 }

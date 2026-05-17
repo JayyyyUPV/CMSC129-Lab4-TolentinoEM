@@ -5,47 +5,643 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Task Manager</title>
     <style>
+      :root {
+        color-scheme: light;
+        --bg: #f6f7f9;
+        --panel: #ffffff;
+        --text: #17202a;
+        --muted: #667085;
+        --line: #d9dee7;
+        --accent: #2563eb;
+        --accent-strong: #1d4ed8;
+        --danger: #b42318;
+        --danger-soft: #fee4e2;
+        --success: #087443;
+        --success-soft: #dcfae6;
+        --shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
       body {
-        font-family: Arial, sans-serif;
-        margin: 2rem;
-        max-width: 720px;
+        margin: 0;
+        min-height: 100vh;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      button,
+      input,
+      textarea {
+        font: inherit;
+      }
+
+      button {
+        border: 1px solid transparent;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 700;
+        min-height: 40px;
+        padding: 0.55rem 0.85rem;
+      }
+
+      button:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+      }
+
+      .app-shell {
+        margin: 0 auto;
+        max-width: 960px;
+        padding: 2rem;
+      }
+
+      .app-header {
+        align-items: flex-end;
+        display: flex;
+        gap: 1rem;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+      }
+
+      .eyebrow {
+        color: var(--muted);
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0;
+        margin: 0 0 0.25rem;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        font-size: 2rem;
+        line-height: 1.15;
+        margin-bottom: 0;
+      }
+
+      h2 {
+        font-size: 1.15rem;
+        margin-bottom: 0;
+      }
+
+      .status {
+        border-radius: 6px;
+        color: var(--muted);
+        min-height: 40px;
+        min-width: 180px;
+        padding: 0.65rem 0.75rem;
+        text-align: right;
+      }
+
+      .status[data-tone="error"] {
+        background: var(--danger-soft);
+        color: var(--danger);
+      }
+
+      .status[data-tone="success"] {
+        background: var(--success-soft);
+        color: var(--success);
+      }
+
+      .task-editor,
+      .task-list-section {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+      }
+
+      .task-editor {
+        margin-bottom: 1rem;
+        padding: 1rem;
+      }
+
+      .field-grid {
+        display: grid;
+        gap: 0.9rem;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
       }
 
       label {
+        color: var(--muted);
         display: block;
-        margin-bottom: 0.75rem;
+        font-size: 0.9rem;
+        font-weight: 700;
       }
 
-      input,
+      input[type="text"],
       textarea {
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        color: var(--text);
         display: block;
-        margin-top: 0.25rem;
+        margin-top: 0.35rem;
+        min-height: 42px;
+        padding: 0.65rem 0.75rem;
         width: 100%;
+      }
+
+      textarea {
+        min-height: 96px;
+        resize: vertical;
+      }
+
+      input:focus,
+      textarea:focus {
+        border-color: var(--accent);
+        outline: 3px solid rgba(37, 99, 235, 0.14);
+      }
+
+      .form-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.65rem;
+        margin-top: 1rem;
+      }
+
+      .primary {
+        background: var(--accent);
+        color: #ffffff;
+      }
+
+      .primary:hover:not(:disabled) {
+        background: var(--accent-strong);
+      }
+
+      .secondary {
+        background: #eef2ff;
+        border-color: #c7d2fe;
+        color: #1e40af;
+      }
+
+      .ghost {
+        background: transparent;
+        border-color: var(--line);
+        color: var(--text);
+      }
+
+      .danger {
+        background: var(--danger-soft);
+        color: var(--danger);
+      }
+
+      .task-list-section {
+        overflow: hidden;
+      }
+
+      .list-header {
+        align-items: center;
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        justify-content: space-between;
+        padding: 1rem;
+      }
+
+      .task-count {
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .task-list {
+        display: grid;
+        gap: 0;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .task-item {
+        align-items: start;
+        border-bottom: 1px solid var(--line);
+        display: grid;
+        gap: 0.9rem;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        padding: 1rem;
+      }
+
+      .task-item:last-child {
+        border-bottom: 0;
+      }
+
+      .task-item.is-completed h3 {
+        color: var(--muted);
+        text-decoration: line-through;
+      }
+
+      .task-item h3 {
+        font-size: 1rem;
+        line-height: 1.35;
+        margin-bottom: 0.25rem;
+        overflow-wrap: anywhere;
+      }
+
+      .task-item p {
+        color: var(--muted);
+        line-height: 1.45;
+        margin-bottom: 0;
+        overflow-wrap: anywhere;
+      }
+
+      .complete-toggle {
+        align-items: center;
+        display: flex;
+        height: 40px;
+      }
+
+      .complete-toggle input {
+        height: 20px;
+        width: 20px;
+      }
+
+      .task-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: flex-end;
+      }
+
+      .empty-state {
+        align-items: center;
+        color: var(--muted);
+        display: flex;
+        gap: 1rem;
+        justify-content: space-between;
+        padding: 1.5rem 1rem;
+      }
+
+      @media (max-width: 720px) {
+        .app-shell {
+          padding: 1rem;
+        }
+
+        .app-header,
+        .field-grid,
+        .task-item {
+          display: block;
+        }
+
+        .status {
+          margin-top: 1rem;
+          min-width: 0;
+          text-align: left;
+        }
+
+        .field-grid label + label {
+          margin-top: 0.9rem;
+        }
+
+        .task-actions {
+          justify-content: flex-start;
+          margin-top: 0.85rem;
+        }
+
+        .empty-state {
+          align-items: flex-start;
+          display: block;
+        }
       }
     </style>
   </head>
   <body>
-    <main>
-      <h1>Task Manager</h1>
-      <form>
-        <label>
-          Title
-          <input data-testid="task-title-input" />
-        </label>
-        <label>
-          Description
-          <textarea data-testid="task-description-input"></textarea>
-        </label>
-        <button type="button" data-testid="create-task-button">Create</button>
-      </form>
-      <ul data-testid="task-list">
-        <li>
-          Sample task
-          <button type="button" data-testid="edit-task-button">Edit</button>
-          <button type="button" data-testid="save-task-button">Save</button>
-          <button type="button" data-testid="delete-task-button">Delete</button>
-        </li>
-      </ul>
+    <main class="app-shell">
+      <header class="app-header">
+        <div>
+          <p class="eyebrow">CMSC129 Lab 4</p>
+          <h1>Task Manager</h1>
+        </div>
+        <div id="status" class="status" aria-live="polite"></div>
+      </header>
+
+      <section class="task-editor" aria-label="Task editor">
+        <form id="task-form">
+          <div class="field-grid">
+            <label>
+              Title
+              <input
+                id="task-title"
+                data-testid="task-title-input"
+                name="title"
+                type="text"
+                autocomplete="off"
+                required
+              />
+            </label>
+            <label>
+              Description
+              <textarea
+                id="task-description"
+                data-testid="task-description-input"
+                name="description"
+              ></textarea>
+            </label>
+          </div>
+
+          <div class="form-actions">
+            <button id="create-button" class="primary" data-testid="create-task-button" type="submit">
+              Add task
+            </button>
+            <button id="save-button" class="secondary" data-testid="save-task-button" type="button" disabled>
+              Save changes
+            </button>
+            <button id="cancel-button" class="ghost" type="button" disabled>
+              Cancel
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section class="task-list-section" aria-labelledby="tasks-heading">
+        <div class="list-header">
+          <h2 id="tasks-heading">Tasks</h2>
+          <span id="task-count" class="task-count">0 tasks</span>
+        </div>
+        <ul id="task-list" class="task-list" data-testid="task-list"></ul>
+      </section>
     </main>
+
+    <script>
+      const state = {
+        tasks: [],
+        editingId: null
+      };
+
+      const elements = {
+        form: document.querySelector("#task-form"),
+        title: document.querySelector("#task-title"),
+        description: document.querySelector("#task-description"),
+        createButton: document.querySelector("#create-button"),
+        saveButton: document.querySelector("#save-button"),
+        cancelButton: document.querySelector("#cancel-button"),
+        list: document.querySelector("#task-list"),
+        count: document.querySelector("#task-count"),
+        status: document.querySelector("#status")
+      };
+
+      function getFormInput() {
+        return {
+          title: elements.title.value,
+          description: elements.description.value
+        };
+      }
+
+      function setStatus(message, tone = "") {
+        elements.status.textContent = message;
+        elements.status.dataset.tone = tone;
+      }
+
+      function setBusy(isBusy) {
+        elements.createButton.disabled = isBusy;
+        elements.saveButton.disabled = isBusy || state.editingId === null;
+        elements.cancelButton.disabled = isBusy || state.editingId === null;
+      }
+
+      function resetForm() {
+        state.editingId = null;
+        elements.form.reset();
+        elements.createButton.textContent = "Add task";
+        setBusy(false);
+      }
+
+      async function requestJson(path, options = {}) {
+        const response = await fetch(path, {
+          ...options,
+          headers: {
+            Accept: "application/json",
+            ...(options.body ? { "Content-Type": "application/json" } : {}),
+            ...options.headers
+          },
+          body: options.body ? JSON.stringify(options.body) : undefined
+        });
+
+        if (response.status === 204) {
+          return null;
+        }
+
+        const body = await response.json();
+
+        if (!response.ok) {
+          throw new Error(body.errors?.join(", ") || "Request failed");
+        }
+
+        return body;
+      }
+
+      function renderEmptyState() {
+        const item = document.createElement("li");
+        item.className = "empty-state";
+
+        const message = document.createElement("span");
+        message.textContent = "No tasks yet.";
+
+        const actions = document.createElement("div");
+        actions.className = "task-actions";
+
+        const editButton = document.createElement("button");
+        editButton.className = "ghost";
+        editButton.type = "button";
+        editButton.textContent = "Edit";
+        editButton.disabled = true;
+        editButton.setAttribute("data-testid", "edit-task-button");
+
+        const deleteButton = document.createElement("button");
+        deleteButton.className = "danger";
+        deleteButton.type = "button";
+        deleteButton.textContent = "Delete";
+        deleteButton.disabled = true;
+        deleteButton.setAttribute("data-testid", "delete-task-button");
+
+        actions.append(editButton, deleteButton);
+        item.append(message, actions);
+        elements.list.appendChild(item);
+      }
+
+      function createTaskItem(task) {
+        const item = document.createElement("li");
+        item.className = `task-item${task.completed ? " is-completed" : ""}`;
+        item.setAttribute("data-testid", "task-item");
+
+        const completeLabel = document.createElement("label");
+        completeLabel.className = "complete-toggle";
+
+        const completeInput = document.createElement("input");
+        completeInput.type = "checkbox";
+        completeInput.checked = task.completed;
+        completeInput.setAttribute("aria-label", `Mark ${task.title} complete`);
+        completeInput.addEventListener("change", () => {
+          toggleTaskCompletion(task.id, completeInput.checked);
+        });
+
+        completeLabel.appendChild(completeInput);
+
+        const content = document.createElement("div");
+
+        const title = document.createElement("h3");
+        title.textContent = task.title;
+
+        const description = document.createElement("p");
+        description.textContent = task.description || "No description";
+
+        content.append(title, description);
+
+        const actions = document.createElement("div");
+        actions.className = "task-actions";
+
+        const editButton = document.createElement("button");
+        editButton.className = "ghost";
+        editButton.type = "button";
+        editButton.textContent = "Edit";
+        editButton.setAttribute("data-testid", "edit-task-button");
+        editButton.addEventListener("click", () => {
+          startEditing(task);
+        });
+
+        const deleteButton = document.createElement("button");
+        deleteButton.className = "danger";
+        deleteButton.type = "button";
+        deleteButton.textContent = "Delete";
+        deleteButton.setAttribute("data-testid", "delete-task-button");
+        deleteButton.addEventListener("click", () => {
+          deleteTask(task.id);
+        });
+
+        actions.append(editButton, deleteButton);
+        item.append(completeLabel, content, actions);
+
+        return item;
+      }
+
+      function renderTasks() {
+        elements.list.replaceChildren();
+        elements.count.textContent = `${state.tasks.length} ${state.tasks.length === 1 ? "task" : "tasks"}`;
+
+        if (state.tasks.length === 0) {
+          renderEmptyState();
+          return;
+        }
+
+        state.tasks.forEach((task) => {
+          elements.list.appendChild(createTaskItem(task));
+        });
+      }
+
+      async function loadTasks() {
+        try {
+          state.tasks = await requestJson("/tasks");
+          renderTasks();
+        } catch (error) {
+          setStatus(error.message, "error");
+        }
+      }
+
+      async function createTask() {
+        setBusy(true);
+
+        try {
+          await requestJson("/tasks", {
+            method: "POST",
+            body: getFormInput()
+          });
+          resetForm();
+          setStatus("Task added.", "success");
+          await loadTasks();
+        } catch (error) {
+          setStatus(error.message, "error");
+          setBusy(false);
+        }
+      }
+
+      function startEditing(task) {
+        state.editingId = task.id;
+        elements.title.value = task.title;
+        elements.description.value = task.description;
+        elements.createButton.textContent = "Update task";
+        setBusy(false);
+        elements.title.focus();
+      }
+
+      async function saveTask() {
+        if (state.editingId === null) {
+          return;
+        }
+
+        setBusy(true);
+
+        try {
+          await requestJson(`/tasks/${state.editingId}`, {
+            method: "PUT",
+            body: getFormInput()
+          });
+          resetForm();
+          setStatus("Task updated.", "success");
+          await loadTasks();
+        } catch (error) {
+          setStatus(error.message, "error");
+          setBusy(false);
+        }
+      }
+
+      async function toggleTaskCompletion(id, completed) {
+        try {
+          await requestJson(`/tasks/${id}`, {
+            method: "PATCH",
+            body: { completed }
+          });
+          await loadTasks();
+        } catch (error) {
+          setStatus(error.message, "error");
+          await loadTasks();
+        }
+      }
+
+      async function deleteTask(id) {
+        setBusy(true);
+
+        try {
+          await requestJson(`/tasks/${id}`, {
+            method: "DELETE"
+          });
+          if (state.editingId === id) {
+            resetForm();
+          }
+          setStatus("Task deleted.", "success");
+          await loadTasks();
+        } catch (error) {
+          setStatus(error.message, "error");
+        } finally {
+          setBusy(false);
+        }
+      }
+
+      elements.form.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        if (state.editingId === null) {
+          createTask();
+        } else {
+          saveTask();
+        }
+      });
+
+      elements.saveButton.addEventListener("click", () => {
+        saveTask();
+      });
+
+      elements.cancelButton.addEventListener("click", () => {
+        resetForm();
+        setStatus("");
+      });
+
+      loadTasks();
+    </script>
   </body>
 </html>
