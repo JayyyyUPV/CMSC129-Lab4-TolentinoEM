@@ -214,6 +214,27 @@ Summary:
 
 ### System Test Results
 
+Failed system test output:
+```bash
+npm run test:system
+```
+
+Summary:
+- Tests: failed during the Red phase before the UI fully satisfied the user stories
+
+![Failed system test output](images/system-test-results/Red%20System.png)
+
+Passing system test output:
+Command:
+```bash
+npm run test:system
+```
+
+Summary:
+- Tests: 3 passed
+
+![Passing system test output](images/system-test-results/Green%20System.png)
+
 
 ### Full Test Suite Results
 
